@@ -30,7 +30,7 @@ echo "kind & kubectl installation complete."
  
 ![image](https://github.com/user-attachments/assets/5a625ce7-4e92-4283-ac36-56d2ced86929)
 
-Verify KIND & kubelet:
+Verify KIND & kubectl:
 
 ```bash
 kind version
@@ -53,11 +53,35 @@ nodes:
 - role: worker
   image: kindest/node:v1.31.2
 ```
+Create the cluster using the configuration file:
+
+```bash
+kind create cluster --config kind-cluster-config.yaml --name my-kind-cluster
+OR
+kind create cluster --config=kind-cluster-config.yaml --name=my-kind-cluster
+```
+
 KIND cluster Installation Screenshot:
 
 ![image](https://github.com/user-attachments/assets/5c55eb4d-a367-4e97-b64b-642d95824666)
 
+Verity the cluster:
 
+```bash
+kubectl cluster-info
+kubectl get nodes
+kubectl get namespace OR kubectl get ns
+```
+
+# 3. Deleting the Cluster
+
+Delete the KIND cluster:
+
+```bash
+kind delete cluster --name my-kind-cluster
+OR
+kind delete cluster --name=my-kind-cluster
+```
 
 
 
