@@ -8,16 +8,27 @@
 To get Pod:
 
 ```bash
-kubectl get pod
-kubectl get pod -n default
+kubectl get pods
+kubectl get pods -n default
 ``` 
 Where -n is used for the namespace and default is the namespace name and inside the default namespace my container is running.
 
-Pod running inside namepace default:
+Pod running inside namespace default:
 
 ![image](https://github.com/user-attachments/assets/1c5e6a14-72b9-4f67-84ec-bdb308da4e70)
 
 ![k8s-pods](https://github.com/user-attachments/assets/bf757784-dd6c-48cb-8de2-58d3663390db)
+
+To delete a Pod:
+
+```bash
+kubectl delete pods nginx -n default
+```
+
+Screenshot to delete a pod under a namespace:
+
+![image](https://github.com/user-attachments/assets/20c2ecc1-5fc6-48ce-8717-5a5ea4b22662)
+
 
 # Q. What is Namespace in kubernetes?
 
