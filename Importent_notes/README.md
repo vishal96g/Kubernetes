@@ -18,7 +18,7 @@ A Deployment is a Kubernetes resource that provides declarative application upda
 
 # Manifests files for namespace, pod and deployment
 
-Namespace manifests files
+Namespace manifests file:
 
 ```bash
 apiVersion: v1
@@ -28,7 +28,7 @@ metadata:
  name: nginx
 ```
 
-Pod manifests files
+Pod manifests file:
 
 ```bash
 apiVersion: v1
@@ -46,7 +46,7 @@ spec:
       - containerPort: 80
 ```
 
-Deployment manifests files
+Deployment manifests file:
 
 ```bash
 apiVersion: apps/v1
