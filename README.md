@@ -1,44 +1,94 @@
 # What is Kubernetes?
 
-1. Kubernetes (also called K8s) is an open-source container orchestration platform.
+1. Kubernetes (also called K8s) is an open-source container orchestration platform.<br>
 2. It is used to automate the deployment, Instead of managing containers manually, Kubernetes automatically handled scheduling, scaling, self-healing, and load balancing.
 
 ## Key Features:
-1. Automated Deployment: Automated Deployment: Deploys applications across cluster nodes.
-2. Auto Scaling: Increases or decreases pods based on CPU or memory usage using the Horizontal Pod Autoscaler (HPA).
-3. Self-Healing: Restarts failed containers, replaces unhealthy pods, and reschedules workloads if a node fails.
-5. Load Balancing: Distributes traffic across multiple pods using Services.
-5. Rolling Updates & Rollbacks: Updates applications without downtime and allows quick rollback if an issue occurs.
-6. Service Discovery: Pods communicate with each other using Kubernetes Services and DNS.
+**1. Automated Deployment:** Automated Deployment: Deploys applications across cluster nodes.<br>
+**2. Auto Scaling:** Increases or decreases pods based on CPU or memory usage using the Horizontal Pod Autoscaler (HPA).<br>
+**3. Self-Healing:** Restarts failed containers, replaces unhealthy pods, and reschedules workloads if a node fails.<br>
+**4. Load Balancing:** Distributes traffic across multiple pods using Services.<br>
+**5. Rolling Updates & Rollbacks:** Updates applications without downtime and allows quick rollback if an issue occurs.<br>
+**6. Service Discovery:** Pods communicate with each other using Kubernetes Services and DNS.<br>
 
 ## Important Kubernetes Objects
-1. Pod: Smallest deployable unit containing one or more containers.
-2. Deployment: Manages pod creation, updates, and scaling.
-3. ReplicaSet: Ensures the desired number of pod replicas are running.
-4. Service: Exposes applications internally or externally.
-5. ConfigMap: Stores non-sensitive configuration.
-6. Secret: Stores sensitive data like passwords and API keys.
-7. Ingress: Routes external HTTP/HTTPS traffic to services.
-8. Namespace: Logically separates resources within the cluster.
+**1. Pod:** Smallest deployable unit containing one or more containers.<br>
+**2. Deployment:** Manages pod creation, updates, and scaling.<br>
+**3. ReplicaSet:** Ensures the desired number of pod replicas are running.<br>
+**4. Service:** Exposes applications internally or externally.<br>
+**5. ConfigMap:** Stores non-sensitive configuration.<br>
+**6. Secret:** Stores sensitive data like passwords and API keys.<br>
+**7. Ingress:** Routes external HTTP/HTTPS traffic to services.<br>
+**8. Namespace:** Logically separates resources within the cluster.<br>
 
+# What is kubectl in Kubernetes?
++ kubectl (pronounced "cube-control") is the command-line tool used to communicate with and manage a Kubernetes cluster.
++ It allows you to create, view, update, and delete Kubernetes resources such as Pods, Deployments, and Services.
 
-# 𝗞𝘂𝗯𝗲𝗿𝗻𝗲𝘁𝗲𝘀 𝗔𝗿𝗰𝗵𝗶𝘁𝗲𝗰𝘁𝘂𝗿𝗲
+## Common kubectl Commands
+```
+kubectl get pods
+kubectl get services
+kubectl create deployment nginx --image=nginx
+kubectl delete pod nginx
+kubectl describe pod nginx
+kubectl logs nginx
+```
+
+# Kubernetes architecture
++ Kubernetes follows a Master-Worker architecture (also called Control Plane and Worker Nodes).
++ **Control Plane (Master Node):** Manages the entire Kubernetes cluster. It makes decisions about scheduling Pods, maintaining the desired state, and monitoring the cluster.
++ **Worker Nodes:** Run the actual application containers inside Pods.
 
 ![kubernetes](https://github.com/user-attachments/assets/1968bb04-9cff-42b0-aad5-91905069cdb1)
 
-𝟭. 𝗔𝗣𝗜 𝗦𝗲𝗿𝘃𝗲𝗿: Acts like a "Team Lead" by managing all components of the worker nodes.
+## Control Plane (Master Node)
+**1. API Server:** 
++ API server is the entry point to the Kubernetes cluster.
++ All commands (kubectl, CI/CD pipelines, or REST API calls) go through the API Server.
++ It validates requests and updates the cluster state in etcd.
++ Example: When you run **"kubectl apply -f deployment.yaml"** the request first goes to the API Server.
 
-𝟮. 𝗦𝗰𝗵𝗲𝗱𝘂𝗹𝗲𝗿: Acts Like an "HR Manager," the scheduler places containers on nodes if one is killed or needs rescheduling.
+**2. etcd:**
++ etcd is a distributed key-value database used by Kubernetes to store all cluster information and configuration data. 
++ If etcd is lost and no backup exists, the cluster cannot be recovered.
 
-𝟯. 𝗲𝘁𝗰𝗱: Acts Like an "database" of Kubernetes, keeping records of all cluster states, such as created or deleted resources.
+**3. Scheduler:**
++ Assigns newly created Pods to the most suitable Worker Node.
++ Makes decisions based on CPU, memory, taints, tolerations, node affinity, and resource availability.
 
-𝟰. 𝗖𝗼𝗻𝘁𝗿𝗼𝗹𝗹𝗲𝗿 𝗠𝗮𝗻𝗮𝗴𝗲𝗿: Acts Like a "Project Manager," it ensures everything is running smoothly in both worker and master nodes, using the API Server.
+**4. Controller Manager:**
++ Continuously checks whether the cluster's actual state matches the desired state.
++ If a Pod crashes, it creates a new Pod automatically.
++ Examples of controllers:
+  + Deployment Controller
+  + ReplicaSet Controller
+  + Node Controller
+  + Job Controller
+    
+**5. Cloud Controller Manager (Optional):**
++ Used in cloud environments like AWS EKS, Azure AKS, or Google GKE.
++ Manages cloud resources such as Load Balancers, storage volumes, and nodes.
 
-𝟱. 𝗞𝘂𝗯𝗲𝗹𝗲𝘁: Ensures that containers in the worker nodes are functioning correctly. If any crashes, Kubelet reports to the API Server.
+## Worker Node
+**1. kubelet:**
++ Kublet is an agent running on every Worker Node.
++ Receives instructions from the API Server.
++ Ensures the required Pods are running.
 
-𝟲. 𝗦𝗲𝗿𝘃𝗶𝗰𝗲 𝗣𝗿𝗼𝘅𝘆: Exposes running applications inside the containers/pods to the end users.
+**2. Kube-Proxy:**
++ Kube-proxy is the Kubernetes component (a process running on every worker node).
 
-𝟳. 𝗖𝗡𝗜 (𝗖𝗼𝗻𝘁𝗮𝗶𝗻𝗲𝗿 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲): Responsible for establishing the network connection between master and worker nodes.
+**3. Service Proxy**
++ Service Proxy is the function or feature of forwarding traffic from a Service to the correct Pod OR Exposes running applications inside the containers/pods to the end users.
++ kube-proxy performs the Service Proxy function.
+  + Service Proxy = Job/Function
+  + kube-proxy = Worker that does the job
 
-𝟴. 𝗸𝘂𝗯𝗲𝗰𝘁𝗹: Act like a "CEO" of the Kubernetes cluster, controlling everything inside the containers. It is used to interact with the Kubernetes cluster.
+**4. Pods:**
++ Pod is the smallest deployable unit in Kubernetes.
++ A Pod contains one or more containers that share the same network and storage.
+
+**5. CNI (Container Network Interface)**
++ Responsible for establishing the network connection between Control Plane and Worker Nodes.
 
