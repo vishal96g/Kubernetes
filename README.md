@@ -1,11 +1,26 @@
-# 𝗞𝘂𝗯𝗲𝗿𝗻𝗲𝘁𝗲𝘀 (𝗸𝟴𝘀)
+# What is Kubernetes?
 
-Kubernetes also known as K8s, is a powerful container orchestration tool that allows you to manage, scale, and heal your containerized applications. Developed by Google in 2014, it is now maintained by the Cloud Native Computing Foundation (CNCF) and is open-source.
+1. Kubernetes (also called K8s) is an open-source container orchestration platform.
+2. It is used to automate the deployment, Instead of managing containers manually, Kubernetes automatically handled scheduling, scaling, self-healing, and load balancing.
 
-# 𝗞𝗲𝘆 𝗙𝗲𝗮𝘁𝘂𝗿𝗲𝘀
-𝟭. 𝗖𝗼𝗻𝘁𝗮𝗶𝗻𝗲𝗿 𝗢𝗿𝗰𝗵𝗲𝘀𝘁𝗿𝗮𝘁𝗶𝗼𝗻: Manage your containerized applications.
-𝟮. 𝗔𝘂𝘁𝗼 𝗛𝗲𝗮𝗹𝗶𝗻𝗴: Automatically detects and recovers failed containers.
-𝟯. 𝗔𝘂𝘁𝗼 𝗦𝗰𝗮𝗹𝗶𝗻𝗴: Scales your applications based on load.
+## Key Features:
+1. Automated Deployment: Automated Deployment: Deploys applications across cluster nodes.
+2. Auto Scaling: Increases or decreases pods based on CPU or memory usage using the Horizontal Pod Autoscaler (HPA).
+3. Self-Healing: Restarts failed containers, replaces unhealthy pods, and reschedules workloads if a node fails.
+5. Load Balancing: Distributes traffic across multiple pods using Services.
+5. Rolling Updates & Rollbacks: Updates applications without downtime and allows quick rollback if an issue occurs.
+6. Service Discovery: Pods communicate with each other using Kubernetes Services and DNS.
+
+## Important Kubernetes Objects
+1. Pod: Smallest deployable unit containing one or more containers.
+2. Deployment: Manages pod creation, updates, and scaling.
+3. ReplicaSet: Ensures the desired number of pod replicas are running.
+4. Service: Exposes applications internally or externally.
+5. ConfigMap: Stores non-sensitive configuration.
+6. Secret: Stores sensitive data like passwords and API keys.
+7. Ingress: Routes external HTTP/HTTPS traffic to services.
+8. Namespace: Logically separates resources within the cluster.
+
 
 # 𝗞𝘂𝗯𝗲𝗿𝗻𝗲𝘁𝗲𝘀 𝗔𝗿𝗰𝗵𝗶𝘁𝗲𝗰𝘁𝘂𝗿𝗲
 
