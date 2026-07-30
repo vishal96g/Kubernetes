@@ -14,8 +14,8 @@
 Yaml file name: namespace.yml
 
 
-apiVersion: v1
 kind: Namespace
+apiVersion: v1
 metadata:
   name: magic-vision
 ```
