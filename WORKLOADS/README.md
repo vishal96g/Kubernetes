@@ -220,5 +220,20 @@ spec:
 
 
 # 6. CronJobs
+**What is a CronJobs?**
++ CronJob is a Kubernetes resource that creates Jobs automatically at scheduled times. It is used for tasks that need to run repeatedly based on a schedule, similar to the Linux cron utility.
++ A CronJob does not execute the task itself. Instead, it creates a Job, and the Job creates one or more Pods to perform the task.
+
+Image:
+
+YAML File for CronJobs
+
+```
+Yaml file name: cronJob.yml
+
+
+```
+
+**Basic Commands**
 
 
