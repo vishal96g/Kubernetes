@@ -181,7 +181,7 @@ spec:
 + Running test scripts
 + CI/CD tasks
 
-Image:
+<img width="1000" height="650" alt="job-k8s" src="https://github.com/user-attachments/assets/9bf70727-2c16-4ab9-bfbc-128fc495f27a" />
 
 YAML File for Jobs
 
@@ -224,16 +224,73 @@ spec:
 + CronJob is a Kubernetes resource that creates Jobs automatically at scheduled times. It is used for tasks that need to run repeatedly based on a schedule, similar to the Linux cron utility.
 + A CronJob does not execute the task itself. Instead, it creates a Job, and the Job creates one or more Pods to perform the task.
 
-Image:
+<img width="1000" height="700" alt="cron-job" src="https://github.com/user-attachments/assets/350f43a8-bb2a-42b6-a3d9-2bc5074a7a51" />
+
+
 
 YAML File for CronJobs
 
 ```
-Yaml file name: cronJob.yml
+Yaml file name: cronjob.yml
 
+
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: minute-backup
+  namespace: magic-vision
+
+spec:
+  schedule: "* * * * *"
+
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: minute-backup
+
+        spec:
+          restartPolicy: OnFailure
+
+          containers:
+            - name: minute-backup
+              image: busybox:latest
+
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Backup Started"
+                  mkdir -p /backups
+                  cp -r /demo-data/* /backups/
+                  echo "Backup Completed"
+
+              volumeMounts:
+                - name: data-volume
+                  mountPath: /demo-data
+
+                - name: backup-volume
+                  mountPath: /backups
+
+          volumes:
+            - name: data-volume
+              hostPath:
+                path: /demo-data
+                type: DirectoryOrCreate
+
+            - name: backup-volume
+              hostPath:
+                path: /backups
+                type: DirectoryOrCreate       
 
 ```
 
 **Basic Commands**
 
++ **Create CronJob from YAML:** kubectl apply -f cronjob.yml
++ **List CronJobs:** kubectl get cronjobs
++ **Describe CronJob:** kubectl describe cronjob my-cronjob
++ **Delete CronJob:** kubectl delete cronjob my-cronjob
 
