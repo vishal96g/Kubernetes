@@ -22,6 +22,6 @@ metadata:
 **Basic Commands**
 + **Apply Namespace:** kubectl apply -f namespace.yml
 + **Switching Namespace Context:** kubectl config set-context --current --namespace=my-namespace
-+ **Listing Namespaces:** kubectl get namespaces
++ **Listing Namespaces:** kubectl get namespaces OR kubectl get ns 
 + **Deleting a Namespace:** kubectl delete namespace my-namespace
 
