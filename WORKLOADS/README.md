@@ -158,9 +158,7 @@ spec:
 + **Delete DaemonSet:** kubectl delete daemonset my-daemonset
 
 
-
-
-# 2. StatefulSets 
+# 4. StatefulSets 
 
 
 # 5. Jobs
