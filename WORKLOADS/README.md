@@ -162,6 +162,63 @@ spec:
 
 
 # 5. Jobs
+**What is a Jobs?**
++ A Job is a Kubernetes workload resource that is used to run a task to completion.
++ Restarts the task if the Pod fails before completion.
++ Marks the Job as Completed after successful execution.
++ Can run one or multiple Pods to complete the job or task.
++ Supports parallel execution.
+
+**Jobs are commonly used for**
+
++ Database backups
++ Database migration scripts
++ Sending emails
++ Report generation
++ Data import/export
++ Batch processing
++ Image or video processing
++ Running test scripts
++ CI/CD tasks
+
+Image:
+
+YAML File for Jobs
+
+```
+Yaml file name: job.yml
+
+
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: nginx-job
+  namespace: magic-vision
+spec:
+  completions: 1
+  parallelism: 1 
+  template:
+    metadata:
+      name: demo-job-pod
+      labels:
+        app: batch-task 
+    spec:
+      containers:
+      - name: batch-container
+        image: busybox:latest 
+        command: ["sh",  "-c", "echo Hello Dosto! && sleep 10"]
+      restartPolicy: Never
+  
+```
+
+**Basic Commands**
++ **Create Job from YAML:** kubectl apply -f job.yml
++ **List Jobs:** kubectl get jobs
++ **Describe Job:** kubectl describe job my-job
++ **Delete Job:** kubectl delete job my-job
++ **Check Job Status:** kubectl get jobs -o wide
+
+
 # 6. CronJobs
 
 
