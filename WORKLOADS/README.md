@@ -60,11 +60,61 @@ spec:
 + **Delete Deployment:** kubectl delete deployment my-deployment
 
 
+# 2. ReplicaSets
+**What is a ReplicaSets?**
++ A ReplicaSet is a Kubernetes resource that ensures a specified number of Pod replicas are running at all times.
++ Its main purpose is to provide high availability by maintaining the desired number of Pods.
++ If a Pod fails or is deleted, the ReplicaSet automatically creates a new Pod.
++ If there are more Pods than required, the ReplicaSet terminates the extra Pods.
++ It uses Labels and Selectors to identify and manage Pods.
++ ReplicaSets are usually not created directly in production; they are managed by a Deployment.
++ ReplicaSet supports scaling by increasing or decreasing the number of Pod replicas.
 
+
+<img width="1000" height="700" alt="Replicasets" src="https://github.com/user-attachments/assets/ae1cf707-f8ef-4104-8799-7ed444442751" />
+
+
+YAML File for ReplicaSets
+
+```
+Yaml file name: replicaset.yml
+
+
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: nginx-replicasets
+  namespace: magic-vision
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-rep-pod 
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+```
+
+**Basic Commands**
++ **Create ReplicaSet:** kubectl apply -f replicaset.yml
++ **Get ReplicaSets:** kubectl get replicaset OR kubectl get rs
++ **Describe ReplicaSet:** kubectl describe rs my-replicaset
++ **Delete ReplicaSet:** kubectl delete rs my-replicaset
 
 # 2. StatefulSets 
+
 # 3. DaemonSets
-# 4. ReplicaSets
+
+
 # 5. Jobs
 # 6. CronJobs
 
