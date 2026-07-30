@@ -110,9 +110,57 @@ spec:
 + **Describe ReplicaSet:** kubectl describe rs my-replicaset
 + **Delete ReplicaSet:** kubectl delete rs my-replicaset
 
-# 2. StatefulSets 
 
 # 3. DaemonSets
+
+**What is a DaemonSets?**
++ A DaemonSet is a Kubernetes workload resource that ensures one Pod runs on every eligible Worker Node in the cluster.
++ As new nodes are added to the cluster, Kubernetes automatically creates the DaemonSet Pod on those nodes. If a node is removed, the corresponding Pod is automatically removed.
+
+<img width="1000" height="700" alt="DaemonSet" src="https://github.com/user-attachments/assets/5019ef37-7081-4416-9a15-e31d2c2e5533" />
+
+
+YAML File for DaemonSets
+
+```
+Yaml file name: daemonset.yml
+
+
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: nginx-daemonset
+  namespace: magic-vision
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-dmn-pod 
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+```
+
+**Basic Commands**
+
++ **Create DaemonSet:** kubectl apply -f daemonset.yml
++ **Get DaemonSets:** kubectl get daemonsets
++ **Describe DaemonSet:** kubectl describe daemonset my-daemonset
++ **Check Pods Created by DaemonSet:** kubectl get pods -o wide
++ **Delete DaemonSet:** kubectl delete daemonset my-daemonset
+
+
+
+
+# 2. StatefulSets 
 
 
 # 5. Jobs
