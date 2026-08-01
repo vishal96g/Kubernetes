@@ -38,3 +38,43 @@ spec:
 + **Describe a specific Service:** kubectl describe svc <service-name>
 + **Delete a Service:** kubectl delete svc <service-name>
 
+# Types of Kubernetes Services.
+Kubernetes provides 4 types of Services to expose applications in different ways. 
+
+## 1. ClusterIP (Default) 
+Accessible only within the cluster.  
+
+**Use Case:**
++ Pod-to-Pod communication
++ Backend database
++ Internal databases
++ Backend APIs
+
+## 2. NodePort
+A NodePort Service exposes your application outside the Kubernetes cluster by opening a specific port on every worker node.
+
+**Use Case:**
++ Testing application
++ Development environments
++ **For example:** Node-IP:NodePort (192.168.1.100:30080)
+  + **where,** 192.168.1.100 = Worker node's IP address
+  + 30080 = NodePort opened by Kubernetes
+
+
+## 3. LoadBalancer
++ A LoadBalancer Service creates an external load balancer (supported by cloud providers) to expose the application to the internet.
+   
+**Use Case:**
++ Production applications
++ Public websites
++ APIs
++ Production website on AWS/Azure/GCP
+
+## 4. ExternalName
+An ExternalName Service maps a Kubernetes Service to an external DNS name.
+
+**Use Case:**
++ Accessing external databases
++ Connecting to third-party APIs
+
+
