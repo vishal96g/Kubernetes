@@ -72,4 +72,38 @@ spec:
 3. Reference the PVC in the Deployment under volumes.
 4. Mount the volume inside the container using volumeMounts.
 
+YAML File for Deployment (with Volume)
 
+```
+Yaml file name: deployment.yml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: magic-vision
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: my-data
+          mountPath: /var/www/html
+      volumes:
+      - name: my-data
+        persistentVolumeClaim:
+          claimName: local-pvc
+
+```
