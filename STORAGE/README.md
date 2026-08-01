@@ -66,4 +66,10 @@ spec:
 + **Describe PVC:** kubectl describe pvc <pvc-name>
 + **Delete PVCs:** kubectl delete pvc.yaml
 
+# To use a PersistentVolumeClaim (PVC) in a Deployment, we need:
+1. Persistent Volumes (PV).
+2. Persistent Volumes Claim (PVC).
+3. Reference the PVC in the Deployment under volumes.
+4. Mount the volume inside the container using volumeMounts.
+
 
