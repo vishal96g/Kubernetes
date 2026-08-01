@@ -77,4 +77,16 @@ An ExternalName Service maps a Kubernetes Service to an external DNS name.
 + Accessing external databases
 + Connecting to third-party APIs
 
+# What is an Ingress?
+Ingress is a Kubernetes object which receives incoming requests and forwards them to the correct Kubernetes Service. 
++ Example: Suppose you have two applications
+  + app1-service
+  + app2-service
+  
+**Easy Way to Remember**
++ **Service →** Connects users to Pods.
++ **Ingress →** Connects the Internet to the correct Service.
+
+<img width="1100" height="700" alt="ingress_controller" src="https://github.com/user-attachments/assets/be0cdbee-8866-45c0-b9e3-168635be91a9" />
+
 
