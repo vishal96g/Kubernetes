@@ -90,3 +90,104 @@ Ingress is a Kubernetes object which receives incoming requests and forwards the
 <img width="1100" height="700" alt="ingress_controller" src="https://github.com/user-attachments/assets/be0cdbee-8866-45c0-b9e3-168635be91a9" />
 
 
+# Configure the NGINX Ingress Controller in a Kind Cluster
+
+**Step 1: Install the NGINX Ingress Controller**
+ For a Kind cluster, install the NGINX Ingress Controller by running
+```
+kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+```
+
+**Step 2: Verify the Installation**
+Check that the ingress-nginx namespace has been created:
+
+```
+kubectl get namespaces
+```
+
+**You should see an output similar to:**
+
+```
+NAME              STATUS   AGE
+default           Active   ...
+kube-system       Active   ...
+ingress-nginx     Active   ...
+magic-vision      Active   ...
+```
+
+**Step 3: Create the Ingress Resource**
+ + **Create a file named ingress.yml**
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-note-ingress
+  namespace: magic-vision
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /nginx
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 80
+
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: notes-app-service
+                port:
+                  number: 8000
+
+```
+
+**Step 4: Apply the Ingress Configuration**
+
+```
+kubectl apply -f ingress.yml
+```
+
+**Step 5: Verify the Ingress Resource**
+Check whether the Ingress resource has been created successfully:
+
+```
+kubectl get ingress -n magic-vision OR kubectl get ing -n magic-vision
+```
+
+**Step 6: Verify the Ingress Controller Service**
+
+List the services running in the ingress-nginx namespace:
+
+```
+kubectl get svc -n ingress-nginx
+```
+
+You should see the ingress-nginx-controller service.
+
+**Step 7: Expose the Ingress Controller**
+Forward port 8080 on your local machine to port 80 of the Ingress Controller:
+
+```
+sudo -E kubectl port-forward service/ingress-nginx-controller \
+  -n ingress-nginx \
+  8080:80 \
+  --address=0.0.0.0
+  ```
+  
+**Access the Applications:** 
++ After the port-forward is running, you can access your applications using:
+  + **NGINX Application:** ```http://<SERVER-IP>:8080/nginx```
+  + **Notes Application:** ```http://<SERVER-IP>:8080/app```
+
+**The NGINX Ingress Controller routes incoming requests based on the URL path:**
++ **/nginx →** nginx-service (Port 80)
++ **/app →** notes-app-service (Port 8000)
+
+
