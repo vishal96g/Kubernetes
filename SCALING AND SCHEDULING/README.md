@@ -1,5 +1,5 @@
 
-# What is Resource Quotas & Limits?
+# 1. What is Resource Quotas & Limits?
 + A ResourceQuota is a Kubernetes object that limits the total amount of resources (CPU, memory, storage) that can be used within a Namespace.
 + ResourceQuota is defined per namespace.
 + Your Deployment’s Pods must request resources 
@@ -73,7 +73,7 @@ spec:
             memory: "1Gi"         # Maximum Uses 
 ```
 
-# What is Probes? 
+# 2. What is Probes? 
 + Probes are health checks in Kubernetes.
 + Kubernetes uses probes to monitor the health of an application running inside a Pod.
 + Based on the probe results, Kubernetes decides whether to wait for the application, send traffic to it, or restart it.
@@ -131,3 +131,75 @@ containers:
 
 
 ```
+
+# 3. What are Taints and Tolerations?
++ Taints and tolerations are used in Kubernetes to control which Pods can run on which Nodes.
++ They work like a "filter system" for scheduling Pods.
+   + **Taint:**
+     + A taint is applied to a Node (puts a restriction on the Node).
+     + It tells Kubernetes "Do not schedule Pods on this Node unless they have permission."
+     + Example:
+        + ```kubectl taint node tws-cluster-worker prod=true:NoSchedule```
+        +  ```kubectl taint node tws-cluster-worker2 prod=true:NoSchedule```
+          
+     + Remove a taint node from a Kubernetes cluster (just add the - at the end)
+        + ```kubectl taint node tws-cluster-worker prod=true:NoSchedule-```
+        +  ```kubectl taint node tws-cluster-worker2 prod=true:NoSchedule-```
+          + Where ```tws-cluster-worker``` and  ```tws-cluster-worker2``` is the nodes in the cluster.
+      
+     + How to check taints on a node.
+        + ```kubectl describe node tws-cluster-worker```
+
+      
+   + **Toleration:**
+     + A toleration is added to a Pod (allows the Pod to use that Node)
+     + It tells Kubernetes "This Pod is allowed to run on a Node with this taint."
+   
+    **Example: Pod with a Toleration**
+
+ ```
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-pod
+  namespace: magic-vision
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+      - containerPort: 80   
+  tolerations:
+  - key: "prod"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+```
+
+# 4. What is Autoscaling in Kubernetes?
++ Autoscaling means Kubernetes automatically increases or decreases resources based on the application's load.
++ Instead of manually changing the number of Pods or Nodes, Kubernetes does it automatically.
+
+**Why do we need Autoscaling?**
+
+**Without autoscaling:**
++ **High traffic →** Application becomes slow or crashes.
++ **Low traffic →** Resources are wasted because too many Pods are running.
+
+**With autoscaling:**
++ **High traffic →** Kubernetes adds Pods.
++ **Low traffic →** Kubernetes removes extra Pods.
+
+This helps improve performance and reduce resource usage.
+
+**Types of Autoscaling in Kubernetes**
++ There are three main types.
+  + Horizontal Pod Autoscaler (HPA)
+  + Vertical Pod Autoscaler (VPA)
+  + Cluster Autoscaler (CA)
+ 
+**1. Horizontal Pod Autoscaler (HPA)**
+
+
+ 
