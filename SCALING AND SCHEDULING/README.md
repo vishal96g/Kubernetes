@@ -86,6 +86,8 @@ spec:
 
 + **2. Readiness Probe**
     + The Readiness Probe tells Kubernetes, "Don't send users' requests to me until I'm fully ready.
+    + Kubernetes sends an HTTP GET request to the specified path and port. If the check succeeds, the Pod is marked as Ready and starts receiving traffic.
+    + If it fails, the Pod stays running but is removed from the Service, so no traffic is sent until it becomes ready again.
   + **Example:**
     + Your application has started, but it's still connecting to the database. Kubernetes waits until the connection is ready before sending traffic.
    
