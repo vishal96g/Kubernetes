@@ -113,7 +113,7 @@ containers:
             port: 80
           initialDelaySeconds: 5  # How long Kubernetes waits before the first check 
           periodSeconds: 10       # Kubernetes performs the probe every 10 seconds (Means 1st after 5 second 2nd after 15 second and 3rd after 25 second). 
-          failureThreshold: 30
+          failureThreshold: 30    # Allow 30 consecutive failed checks (30 × 10 seconds = 300 seconds (5 minutes). 
 
         readinessProbe:
           httpGet:
