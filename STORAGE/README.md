@@ -128,7 +128,7 @@ metadata:
   name: mysql-config-map
   namespace: mysql 
 data:
-  MYSQL_ROOT_PASSWORD: root    # Use this value in the StatefulSet or any YAML file
+  MYSQL_ROOT_PASSWORD: root123    # Use this value in the StatefulSet or any YAML file
   MYSQL_DATABASE: devops       # Use this value in the StatefulSet or any YAML file
 
 
@@ -164,18 +164,56 @@ env:
         key: MYSQL_DATABASE
 ```
 
-**What is a Namespace?**
+# What is a Secret?
+A Secret is Kubernetes object used to store securely sensitive data separately from the application configuration such as:
+ + Passwords
+ + API Keys
+ + Database Credentials
+ + SSH Keys
+ + TLS Certificates
+ + Access Tokens
 
-Image:
+Instead of hardcoding these values in your Deployment or StatefulSet YAML files, you store them in a Secret and reference them in your Pods. 
 
-YAML File for Namespace
+<img width="1000" height="650" alt="Secrets in Statefulset" src="https://github.com/user-attachments/assets/25ef6a4e-3e81-4484-b730-b75d9a43793f" />
+
+
+YAML File for Secret
 
 ```
-Yaml file name: namespace.yml
+Yaml file name: secret.yml
 
 
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mysql-secret
+  namespace: mysql
+data:
+  MYSQL_ROOT_PASSWORD: cm9vdDEyMw==   #Encoded password "root123"
 ```
 
-**Basic Commands**
+**Instead of hardcoding in StatefulSet or any YAML file:**
+
+```
+ env:
+   - name: MYSQL_ROOT_PASSWORD
+     value: root123
+```
+
+**Use the Secret in the StatefulSet or any YAML file:**
+
+```
+env:
+  - name: MYSQL_ROOT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-secret     #Name of the Secret
+        key: MYSQL_ROOT_PASSWORD
+```
+
+
+
+
 
 
