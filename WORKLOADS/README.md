@@ -158,7 +158,86 @@ spec:
 + **Delete DaemonSet:** kubectl delete daemonset my-daemonset
 
 
-# 4. StatefulSets 
+# 4. StatefulSets?
++ A StatefulSet is a Kubernetes workload resource used to manage stateful applications.
++ It provides stable pod identities, persistent storage, and ordered deployment and scaling, making it ideal for applications like databases.
++ Examples:
+  + MySQL
+  + MongoDB
+  + PostgreSQL 
+
+<img width="1100" height="700" alt="Stateless vs Stateful Kubernetes" src="https://github.com/user-attachments/assets/a3c14ccc-b1b4-49e0-9046-a0d2bd27105e" />
+
+
+YAML File for StatefulSets
+
+```
+Yaml file name: statefulset.yml
+
+
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: mysql-statefulset
+  namespace: mysql
+spec:
+  serviceName: mysql-service              #Service Name of Headless Service required.
+  replicas: 3
+  serviceName: mysql-headless-service
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: devops               #create devops database
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+```
+## StatefulSet requires a Headless Service
++ StatefulSet requires a Headless Service. Unlike a Deployment, which usually uses a normal ClusterIP Service for load balancing, a StatefulSet uses a Headless Service (clusterIP: None) to provide a stable network identity to each pod.
+
+**YAML File for Headless Service**
+
+```
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-service
+  namespace: mysql
+spec:
+  clusterIP: None       #ClusterID should be "None" for Headless Service
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+```
 
 
 # 5. Jobs
