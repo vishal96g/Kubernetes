@@ -107,3 +107,75 @@ spec:
           claimName: local-pvc
 
 ```
+
+# What is ConfigMap?
++ A ConfigMap is used to store non-sensitive configuration values (environment variables) in one central place.
++ Instead of hardcoding values like database host, application environment, or port number in the Deployment YAML or other Kubernetes resources, We store them in a ConfigMap.
++ This makes it easy to update configuration by changing only the ConfigMap, without modifying multiple YAML files or rebuilding the application.
+
+<img width="1000" height="650" alt="configMap in Statefulset" src="https://github.com/user-attachments/assets/fbfd8aec-8180-460e-bc58-9ea725dfd859" />
+
+
+YAML File for ConfigMap
+
+```
+Yaml file name: configmap.yml
+
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mysql-config-map
+  namespace: mysql 
+data:
+  MYSQL_ROOT_PASSWORD: root    # Use this value in the StatefulSet or any YAML file
+  MYSQL_DATABASE: devops       # Use this value in the StatefulSet or any YAML file
+
+
+```
+
+**Use the ConfigMap in your StatefulSet or any YAML file**
+
+**Instead of hardcoding in StatefulSet or any YAML file:**
+
+```
+ env:
+   - name: MYSQL_ROOT_PASSWORD
+     value: root123
+   - name: MYSQL_DATABASE
+     value: devops
+```
+
+**Use the ConfigMap in the StatefulSet or any YAML file:**
+
+```
+env:
+  - name: MYSQL_ROOT_PASSWORD
+    valueFrom:
+      configMapKeyRef:
+        name: mysql-config-map     #Name of the ConfigMap
+        key: MYSQL_ROOT_PASSWORD
+
+env:
+  - name: MYSQL_DATABASE
+    valueFrom:
+      configMapKeyRef:
+        name: mysql-config-map    #Name of the ConfigMap
+        key: MYSQL_DATABASE
+```
+
+**What is a Namespace?**
+
+Image:
+
+YAML File for Namespace
+
+```
+Yaml file name: namespace.yml
+
+
+```
+
+**Basic Commands**
+
+
