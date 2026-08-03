@@ -154,8 +154,8 @@ containers:
    + **Toleration:**
      + A toleration is added to a Pod (allows the Pod to use that Node)
      + It tells Kubernetes "This Pod is allowed to run on a Node with this taint."
-   
-    **Example: Pod with a Toleration**
+
+**Example: Pod with a Toleration**
 
  ```
 kind: Pod
@@ -176,6 +176,8 @@ spec:
     effect: "NoSchedule"
 
 ```
+
+<img width="1000" height="650" alt="HPA_VPA" src="https://github.com/user-attachments/assets/48193d8d-b834-40ad-9327-e36357e35574" />
 
 # 4. What is Autoscaling in Kubernetes?
 + Autoscaling means Kubernetes automatically increases or decreases resources based on the application's load.
@@ -199,7 +201,151 @@ This helps improve performance and reduce resource usage.
   + Vertical Pod Autoscaler (VPA)
   + Cluster Autoscaler (CA)
  
-**1. Horizontal Pod Autoscaler (HPA)**
+**Note:** 
+HPA (Horizontal Pod Autoscaler) and VPA (Vertical Pod Autoscaler) rely on metrics to make scaling decisions. By default, a KIND (Kubernetes IN Docker) cluster does not include the Metrics Server. Therefore, if you want to use HPA (and VPA components that require resource metrics), you need to install the Metrics Server in the kube-system namespace.
+
+**Why is Metrics Server needed?**
++ HPA uses CPU and memory metrics collected by the Metrics Server to automatically increase or decrease the number of pod replicas.
++ VPA uses resource usage metrics (along with its recommender component) to suggest or apply CPU and memory requests/limits.
++ Without the Metrics Server:
+  + kubectl top nodes and kubectl top pods will not work.
+  + HPA based on CPU/memory metrics will not function.
+  + VPA recommendations based on live resource usage will be unavailable or limited.
+
++ **In a KIND cluster By default, KIND does not install the Metrics Server. You typically install it with:**
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
++ **For KIND, you often also need to modify the Metrics Server deployment to include:**
+
+```
+kubectl -n kube-system edit deployment metrics-server
+```
++ **Add the security bypass to deployment under ```container.args```**
+```
+- --kubelet-insecure-tls
+- --kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP
+```
+
++ **Restart the deployment**
+```
+kubectl -n kube-system rollout restart deployment metrics-server
+```
++ **Verify if the metrics server is running**
+```
+kubectl get pods -n kube-system
+kubectl top nodes
+```
+## 1. Project for HPA (Horizontal Pod Autoscaler):
 
 
- 
+YAML File for Namespace
+
+```
+Yaml file name: namespace.yml
+
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ns-apche
+```
+
+YAML File for Deployment
+
+```
+Yaml file name: deployment.yml
+
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: apache-deployment
+  namespace: ns-apache
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+        - name: apache
+          image: httpd:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi" 
+
+```
+
+YAML File for Service
+
+```
+Yaml file name: service.yml
+
+
+apiVersion: v1 
+kind: Service
+metadata:
+  name: apache-service
+  namesapce: ns-apache
+spec:
+  selector:  
+      name: apache
+  ports:
+    - protocol: TCP
+      port: 80             # exposed port in the cluster
+      targetPort: 80       # container port
+  type: ClusterIP  
+
+```
+
+Expose ``` sudo -E kubectl port-forward service/apache-service -n apache 82:80 --address=0.0.0.0```
+
+
+YAML File for HPA (Horizontal Pod Autoscaler)
+
+```
+Yaml file name: hpa.yml
+
+
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: apache-hpa
+  namesapce: ns-apache
+
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: apache-deployment   # This is my deployment name which one i want to scale up and scale down
+
+  minReplicas: 1
+  maxReplicas: 10
+
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+
+```
+
+**Generate Load**
++ Start a temporary pod:```kubectl run -i --tty load-generator --image=busybox -n ns-apache /bin/sh```
+  
++ Inside the pod, run an infinite loop:  ```while true; do wget -q -O- http://apache-deployment > /dev/null done```
+
