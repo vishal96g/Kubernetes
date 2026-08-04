@@ -420,3 +420,102 @@ spec:
   
 + Inside the pod, run an infinite loop:  ```while true; do wget -q -O- http://apache-deployment > /dev/null done```
 
+# 5. What is Node Affinity / Node Selector?
++ Node Affinity is a Kubernetes feature that tells the scheduler schedule the this Pod only on nodes that match these labels of the nodes.
++ Imagine you have three workers in a company:
+  + Worker-1 → Handles databases
+  + Worker-2 → Handles web applications
+  + Worker-3 → Has a GPU for AI tasks
+
+When you assign a database job, you want it to go only to Worker-1.
+
+**How Node Affinity Works:**
+
+**Step 1: Label the Node**
+ + View your nodes ```kubectl get nodes```
+ + Add a label: ```kubectl label node worker-1 disktype=ssd```
+ + Verify: ```kubectl get nodes --show-labels```
+ + Example:
+
+``` 
+worker-1   disktype=ssd
+worker-2   disktype=hdd
+worker-3   gpu=true
+```
+
+**Step 2: Create a Deployment Using Node Affinity**
+
+```
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: apache-deployment
+  name: ns-apache
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: apache
+
+  template:
+    metadata:
+      labels:
+        app: apache
+
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: disktype
+                operator: In
+                values:
+                - ssd
+
+      containers:
+      - name: apache
+        image: httpd:2.4
+```
+**This tells Kubernetes:**
+ + Schedule the Pod only on nodes where ```disktype=ssd.```
+
+**Types of Node Affinity:**
+ + There are two main types.
+    + requiredDuringSchedulingIgnoredDuringExecution
+    + preferredDuringSchedulingIgnoredDuringExecution
+
+**1. requiredDuringSchedulingIgnoredDuringExecution**
+   + If no node matches the rule, the Pod remains Pending.
+   + Example:
+     
+```
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: disktype
+          operator: In
+          values:
+          - ssd
+```
+
+**2. requiredDuringSchedulingIgnoredDuringExecution**
+   + The scheduler tries to place the Pod on a matching node, but if none is available, it schedules the Pod on another suitable node.
+   + Example:
+     
+```
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      preference:
+        matchExpressions:
+        - key: disktype
+          operator: In
+          values:
+          - ssd
+```
