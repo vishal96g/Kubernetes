@@ -238,7 +238,11 @@ kubectl top nodes
 ```
 ## 1. Project for HPA (Horizontal Pod Autoscaler):
 
-
+**Prerequisites:**
++ Kubernetes Cluster
++ kubectl
++ Metrics Server installed
+  
 YAML File for Namespace
 
 ```
@@ -344,7 +348,74 @@ spec:
 
 ```
 
-**Generate Load**
+**Generate Load:**
++ Start a temporary pod:```kubectl run -i --tty load-generator --image=busybox -n ns-apache /bin/sh```
+  
++ Inside the pod, run an infinite loop:  ```while true; do wget -q -O- http://apache-deployment > /dev/null done```
+
+## 1. Project for VPA (Vertical Pod Autoscaler):
+**Prerequisites:**
++ Kubernetes Cluster
++ kubectl
++ Metrics Server installed
+
+**Step 1: Install Vertical Pod Autoscaler**
++ Install the official VPA manifests:
+ ```
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+```
+
+**Install VPA:**
+```
+./hack/vpa-up.sh
+```
+
+**Verify installation:**
+```
+kubectl get pods -n kube-system
+```
+
+**You should see:**
+```
+vpa-admission-controller
+vpa-recommender
+vpa-updater
+```
+
+ YAML File for VPA (Vertical Pod Autoscaler)
+
+```
+Yaml file name: vpa.yml
+
+
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: apache-vpa
+  namesapce: ns-apache
+
+spec:
+  TargetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: apache-deployment   # This is my deployment name which one i want to scale up and scale down by VPA| (Refer same NS, Depolyment, Service of HPA for VPA)
+
+  updatePolicy: 
+    updateMode: "Auto"        # 3 Option (Off, Initial & Auto)
+
+  resourcePolicy:
+    containerPolicies:
+    - containerName: '*'
+      minAllowed:
+        cpu: 100m
+        memory: 100Mi
+      maxAllowed:
+        cpu: 2
+        memory: 2Gi
+```
+
+**Generate Load:**
 + Start a temporary pod:```kubectl run -i --tty load-generator --image=busybox -n ns-apache /bin/sh```
   
 + Inside the pod, run an infinite loop:  ```while true; do wget -q -O- http://apache-deployment > /dev/null done```
