@@ -61,5 +61,5 @@ resources:
 
 **5. Package the Chart**
 ```
-helm package .
+helm package apache-chart/
 ```
