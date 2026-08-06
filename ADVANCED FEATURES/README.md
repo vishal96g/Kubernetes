@@ -1,5 +1,5 @@
 
-# What is Helm?
+# 1. What is Helm?
 + Helm is a package manager for Kubernetes that simplifies deploying and managing applications using reusable templates called Charts.
 
 **Install Helm on Linux:**
@@ -68,4 +68,30 @@ helm package apache-chart/
 **5. Install the Chart**
 ```
 helm install dev-apache apache-chart -n dev-apache --create-namespace
-``` 
+```
+
+# 2. What is an Init Container?
++ An Init Container is a special container that runs before the main application container starts.
++ Its job is to perform setup tasks, such as:
+   + Download configuration files
+   + Wait for a database to become available
+   + Create required directories
+   + Initialize data
+
+**Important:**
++ It runs only once.
++ It must complete successfully before the main container starts.
++ If it fails, the main container will not start.
+
+# 3. What is a Sidecar Container?
++ A Sidecar Container is a helper container that runs alongside the main application container in the same Pod.
++ It provides supporting services while the application is running.
++ Common uses:
+   + Collect logs
+   + Monitor the application
+   + Proxy network traffic
+   + Synchronize files
+
+**Important:**
++ Starts with the main container.
++ Runs as long as the Pod is running.
