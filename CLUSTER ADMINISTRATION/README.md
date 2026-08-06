@@ -29,9 +29,9 @@
 **4. ClusterRoleBinding:**
 + A ClusterRoleBinding connects a ClusterRole to a User, Group, or ServiceAccount.
 
+## 1. RBAC Namespace-Level Access in Kubernetes
 
-
-**YAML File for Role**
+**1. Create a YAML File for Role**
 
 ```
 Yaml file name: role.yml
@@ -47,8 +47,9 @@ rules:
   verbs: ["get", "apply", "create", "delete", "watch", "list", "patch"]
 
 ```
++ **Apply it:** ``` kubectl apply -f role.yml```
 
-**YAML File for Service Account**
+**2. Create a YAML File for Service Account**
 
 ```
 Yaml file name: service-account.yml
@@ -61,8 +62,11 @@ metadata:
   namespace: apache
 
 ```
++ **Apply it:** ``` kubectl apply -f service-account.yml```
 
-**YAML File for Role Binding**
+
+
+**3. Create a YAML File for Role Binding**
 
 ```
 Yaml file name: role-binding.yml
@@ -89,6 +93,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ```
++ **Apply it:** ``` kubectl apply -f role-binding.yml```
 
 **Basic Commands**
 ```
@@ -101,3 +106,74 @@ Kubectl get role -n namespace
 kubectl auth can-i get pods --as=apache-user -n namespace 
 ```
 
+## 2. RBAC Cluster-Level Access in Kubernetes
+
+**1. Create a YAML File for ClusterRole**
+
+```
+Yaml file name: cluster-role.yml
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: apache-cluster-manager          # This is the Cluster Role
+
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+```
++ **Apply it:** ``` kubectl apply -f cluster-role.yml```
+
+**2. Create a YAML File for Service Account**
+ + Although a ClusterRole is cluster-wide, a ServiceAccount is still created in a namespace.
+
+```
+Yaml file name: service-account.yml
+
+
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: apache-admin         # This is the username of user
+  namespace: apache
+
+```
++ **Apply it:** ``` kubectl apply -f service-account.yml```
+
+**3. Create a YAML File for ClusterRoleBinding**
+
+```
+Yaml file name: cluster-role-binding.yml
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: apache-cluster-manager-binding
+
+subjects:
+- kind: ServiceAccount
+  name: apache-admin
+  namespace: apache
+
+roleRef:
+  kind: ClusterRole
+  name: apache-cluster-manager
+  apiGroup: rbac.authorization.k8s.io
+
+```
+
++ **Apply it:** ``` kubectl apply -f cluster-role-binding.yml```
+
+**Quick Rule to Remember:**
++ **ServiceAccount →** Who (the identity used by Pods/applications to access the Kubernetes API).
++ **Role →** What can be done within one namespace.
++ **RoleBinding →** Connects the ServiceAccount (or User/Group) to a Role within one namespace.
++ **ClusterRole →** What can be done across the entire cluster.
++ **ClusterRoleBinding →** Connects the ServiceAccount (or User/Group) to a ClusterRole across the entire cluster.
