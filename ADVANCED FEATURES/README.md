@@ -115,3 +115,22 @@ spec:
 **Important:**
 + Starts with the main container.
 + Runs as long as the Pod is running.
+
+**Example of Sidecar Container:**
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apache-sidecar-pod
+spec:
+  containers:
+  - name: apache
+    image: httpd:2.4
+    ports:
+    - containerPort: 80
+
+  - name: sidecar
+    image: busybox
+    command: ["sh", "-c", "while true; do echo 'Sidecar: Monitoring Apache...'; sleep 10; done"]
+```
+
