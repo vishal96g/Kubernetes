@@ -63,3 +63,8 @@ resources:
 ```
 helm package apache-chart/
 ```
+
+**5. Install the Chart**
+```
+helm install dev-apache apache-chart -n dev-apache --create-namespace
+``` 
