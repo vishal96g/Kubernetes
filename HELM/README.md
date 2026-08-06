@@ -11,12 +11,12 @@ chmod 700 get_helm.sh
 
 ## To create a Helm Chart for an Apache application
 
-+ Verify Helm is installed:
+**1. Verify Helm is installed:**
 ```
 helm version
 ```
 
-+ Create a New Helm Chart:
+**2. Create a New Helm Chart:**
 ```
 helm create apache-chart
 ```
@@ -27,3 +27,39 @@ helm create apache-chart
 + Understand the Files:
 <img width="735" height="396" alt="image" src="https://github.com/user-attachments/assets/8e22efd8-7fd7-41ed-8952-fdea36486680" />
 
+**3. Update Chart.yaml**
+```
+apiVersion: v2
+name: apache-chart
+description: Helm chart for Apache Web Server
+type: application
+version: 0.1.0
+appVersion: "2.4"
+```
+
+**4. Update values.yaml**
+```
+replicaCount: 2
+
+image:
+  repository: httpd
+  tag: "2.4"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+```
+
+**5. Package the Chart**
+```
+helm package .
+```
