@@ -83,6 +83,26 @@ helm install dev-apache apache-chart -n dev-apache --create-namespace
 + It must complete successfully before the main container starts.
 + If it fails, the main container will not start.
 
+**An Init Container that simply waits for 10 seconds before starting Apache:**
+```
+kind: Pod
+apiVersion: v1
+metadata:
+  name: apache-pod
+spec:
+  initContainers:
+  - name: init-cotainer-wait-10-seconds
+    image: busybox
+    command: ["sh", "-c", "echo 'Waiting for 10 seconds...'; sleep 10; echo 'Done.'"]
+
+  containers:
+  - name: apache
+    image: httpd:2.4
+    ports:
+    - containerPort: 80
+```
+
+
 # 3. What is a Sidecar Container?
 + A Sidecar Container is a helper container that runs alongside the main application container in the same Pod.
 + It provides supporting services while the application is running.
